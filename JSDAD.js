@@ -1,5 +1,4 @@
 
-
 // Global cart storage
 let cartItems = [];
 let tipPercent = 0;
@@ -321,12 +320,13 @@ function closeCheckoutDrawer() {
     backdrop.classList.remove("open");
     // Restore body scroll
     document.body.style.overflow = "";
-  }
+   }
 }
 
-// --- Email Sending: FormSubmit only ---
-const FORMSUBMIT_URL = 'https://formsubmit.co/aidenjgregg@gmail.com';
-const FORM_SUBMIT_TIMEOUT_MS = 8000;
+// --- Email Sending: Web3Forms ---
+const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
+const WEB3FORMS_ACCESS_KEY = '88747690-3a68-423b-9738-a8a072de0d63';
+const FORM_REQUEST_TIMEOUT_MS = 10000;
 
 function createHiddenField(name, value) {
   const input = document.createElement("input");
@@ -337,7 +337,7 @@ function createHiddenField(name, value) {
 }
 
 /**
- * Send order notification using FormSubmit.
+ * Send order notification using Web3Forms.
  * @param {object} order - The order details object.
  * @param {string} order.name - Customer name.
  * @param {string} order.phone - Customer phone.
@@ -354,72 +354,62 @@ async function sendOrderNotification(order) {
     .join('\n');
   const orderId = 'TLF-' + Date.now();
 
-  return fallbackFormSubmit(order, itemsList, orderId);
+  return submitOrderWithWeb3Forms(order, itemsList, orderId);
 }
 
-// Fallback: original formsubmit approach (keeps existing behavior)
-async function fallbackFormSubmit(order, itemsList, orderId) {
-  const form = document.createElement('form');
-  const iframe = document.createElement('iframe');
-  const targetName = `order-submit-${Date.now()}`;
+async function submitOrderWithWeb3Forms(order, itemsList, orderId) {
+  const accessKey = WEB3FORMS_ACCESS_KEY.trim();
 
-  form.method = 'POST';
-  form.action = FORMSUBMIT_URL;
-  form.style.display = 'none';
-  form.target = targetName;
+  if (!accessKey) {
+    alert('Add your Web3Forms access key in JSDAD.js before testing orders.');
+    return false;
+  }
 
-  iframe.name = targetName;
-  iframe.title = "Hidden order submission frame";
-  iframe.style.display = "none";
-
-  form.appendChild(createHiddenField("name", order.name || ""));
-  form.appendChild(createHiddenField("phone", order.phone || ""));
-  form.appendChild(createHiddenField("items", itemsList));
-  form.appendChild(createHiddenField("total", `$${(order.total || 0).toFixed(2)}`));
-  form.appendChild(createHiddenField("pickup", `${order.pickupDate || ''} ${order.pickupTime || ''}`.trim()));
-  form.appendChild(createHiddenField("notes", order.notes || "None"));
-  form.appendChild(createHiddenField("orderId", orderId));
-  form.appendChild(createHiddenField("paypalCaptureId", order.paypalCaptureId || "N/A"));
-  form.appendChild(createHiddenField("_subject", `New BBQ Order - ${order.name || 'Customer'}`));
-  form.appendChild(createHiddenField("_captcha", "false"));
-  form.appendChild(createHiddenField("_template", "table"));
-
-  document.body.appendChild(iframe);
-  document.body.appendChild(form);
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FORM_REQUEST_TIMEOUT_MS);
 
   try {
-    await new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-        reject(new Error("Timed out waiting for fallback email submission."));
-      }, FORM_SUBMIT_TIMEOUT_MS);
-
-      iframe.addEventListener("load", () => {
-        clearTimeout(timeoutId);
-        resolve();
-      }, { once: true });
-
-      requestAnimationFrame(() => {
-        try {
-          form.submit();
-        } catch (submitError) {
-          clearTimeout(timeoutId);
-          reject(submitError);
-        }
-      });
+    const response = await fetch(WEB3FORMS_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        access_key: accessKey,
+        subject: `New BBQ Order - ${order.name || 'Customer'}`,
+        from_name: 'TLF BBQ Online Orders',
+        name: order.name || '',
+        phone: order.phone || '',
+        email: 'orders@tlfbbq.local',
+        replyto: 'orders@tlfbbq.local',
+        items: itemsList,
+        total: `$${(order.total || 0).toFixed(2)}`,
+        pickup: `${order.pickupDate || ''} ${order.pickupTime || ''}`.trim(),
+        notes: order.notes || 'None',
+        orderId: orderId,
+        paypalCaptureId: order.paypalCaptureId || 'N/A',
+        botcheck: ''
+      }),
+      signal: controller.signal
     });
 
-    console.log('FormSubmit sent successfully.');
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.success === false) {
+      const message = result.message || `Request failed with status ${response.status}.`;
+      throw new Error(message);
+    }
+
+    console.log('Web3Forms sent successfully.', result);
     showOrderSentConfirmation();
     return true;
   } catch (error) {
-    console.error('Error submitting form:', error);
-    alert('An error occurred while submitting your order. Please try again.');
+    console.error('Web3Forms error:', error);
+    alert(`Web3Forms could not send the order: ${error.message}`);
     return false;
   } finally {
-    setTimeout(() => {
-      form.remove();
-      iframe.remove();
-    }, 1000);
+    clearTimeout(timeoutId);
   }
 }
 
@@ -442,8 +432,8 @@ function legacyShowOrderSentConfirmation(isFallback = false) {
   alert(msg);
 }
 
-function showOrderSentConfirmation() {
-  const msg = 'Order sent using FormSubmit. Check the restaurant inbox to confirm it arrived.';
+function showOrderSentConfirmation(options = {}) {
+  const msg = 'Order sent using Web3Forms. Check aidenjgregg@gmail.com to confirm it arrived.';
   alert(msg);
 }
 
