@@ -329,7 +329,7 @@ function closeCheckoutDrawer() {
 
 // --- Email Sending: Web3Forms ---
 const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
-const WEB3FORMS_ACCESS_KEY = '';
+const WEB3FORMS_ACCESS_KEY = '88747690-3a68-423b-9738-a8a072de0d63';
 const FORM_REQUEST_TIMEOUT_MS = 10000;
 
 function createHiddenField(name, value) {
