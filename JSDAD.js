@@ -1,3 +1,4 @@
+
 // Global cart storage
 let cartItems = [];
 let tipPercent = 0;
@@ -274,7 +275,7 @@ function closeCheckoutDrawer() {
 async function sendOrderNotification(order) {
   const form = document.createElement('form');
   form.method = 'POST';
-  form.action = 'https://formsubmit.co/aidenjgregg@gmail.com';
+  form.action = 'https://formsubmit.co/aidenjgregg@gmail.com'; // Your email address
   form.style.display = 'none';
   
   const itemsList = order.items.map(i => `${i.qty}x ${i.name}`).join('\n');
@@ -300,7 +301,7 @@ async function sendOrderNotification(order) {
 }
 
 // Test email order function
-function testEmailOrder() {
+function testOrderNotification() {
   if (cartItems.length === 0) {
     alert('Add items to cart first! 🛒');
     openCheckoutDrawer();
@@ -372,7 +373,7 @@ function showPrePayConfirmation() {
   closeCheckoutDrawer();
 
   // Test email button
-  document.getElementById('test-email-btn')?.addEventListener('click', testEmailOrder);
+  document.getElementById('test-email-btn')?.addEventListener('click', testOrderNotification);
 
   // PayPal integration (if available)
   if (typeof paypal !== "undefined") {
