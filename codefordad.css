@@ -40,6 +40,16 @@
       background-size: 260px;
       background-blend-mode: soft-light;
       min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top, #111 0, #050505 55%, #000 100%);
+      z-index: -1;
+      pointer-events: none;
     }
 
     h1, h2, h3 {
@@ -1138,6 +1148,14 @@
     @media (max-width: 768px) {
       html,
       body {
+        background-color: #050505;
+      }
+
+      #dynamic-content,
+      #landing-page,
+      .page-scroll-wrap,
+      .page-content,
+      .confirmation-screen {
         background-color: #050505;
       }
 
