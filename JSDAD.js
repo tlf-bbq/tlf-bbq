@@ -324,34 +324,9 @@ function closeCheckoutDrawer() {
   }
 }
 
-// --- Email Sending: EmailJS + fallback to formsubmit ---
-// Ensure EmailJS is initialized in your HTML: <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-// and then call: emailjs.init('YOUR_EMAILJS_USER_ID');
-
-const EMAILJS_SERVICE_ID = 'service_71eu0ig';
-const EMAILJS_TEMPLATE_ID = '';
+// --- Email Sending: FormSubmit only ---
 const FORMSUBMIT_URL = 'https://formsubmit.co/aidenjgregg@gmail.com';
 const FORM_SUBMIT_TIMEOUT_MS = 8000;
-
-function isConfiguredEmailJsValue(value) {
-  if (!value) return false;
-
-  const normalized = String(value).trim();
-  return (
-    normalized !== '' &&
-    !normalized.includes('YOUR_') &&
-    !normalized.includes('ABC123')
-  );
-}
-
-function canUseEmailJs() {
-  return (
-    typeof emailjs !== "undefined" &&
-    typeof emailjs.send === "function" &&
-    isConfiguredEmailJsValue(EMAILJS_SERVICE_ID) &&
-    isConfiguredEmailJsValue(EMAILJS_TEMPLATE_ID)
-  );
-}
 
 function createHiddenField(name, value) {
   const input = document.createElement("input");
@@ -362,7 +337,7 @@ function createHiddenField(name, value) {
 }
 
 /**
- * Send order notification using EmailJS (preferred) with a fallback to formsubmit.co.
+ * Send order notification using FormSubmit.
  * @param {object} order - The order details object.
  * @param {string} order.name - Customer name.
  * @param {string} order.phone - Customer phone.
@@ -379,31 +354,7 @@ async function sendOrderNotification(order) {
     .join('\n');
   const orderId = 'TLF-' + Date.now();
 
-  const templateParams = {
-    name: order.name || '',
-    phone: order.phone || '',
-    items: itemsList,
-    total: `$${(order.total || 0).toFixed(2)}`,
-    pickup: `${order.pickupDate || ''} ${order.pickupTime || ''}`.trim(),
-    notes: order.notes || 'None',
-    orderId: orderId,
-    paypalCaptureId: order.paypalCaptureId || 'N/A' // Include PayPal ID if available
-  };
-
-  try {
-    if (!canUseEmailJs()) {
-      throw new Error("EmailJS is not fully configured. Using fallback form submit.");
-    }
-
-    const response = await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
-    console.log('EmailJS sent successfully:', response);
-    showOrderSentConfirmation(false); // Not a fallback
-    return true; // Indicate success
-  } catch (err) {
-    console.error('EmailJS send failed or not available:', err);
-    // Fallback to formsubmit
-    return fallbackFormSubmit(order, itemsList, orderId);
-  }
+  return fallbackFormSubmit(order, itemsList, orderId);
 }
 
 // Fallback: original formsubmit approach (keeps existing behavior)
@@ -457,8 +408,8 @@ async function fallbackFormSubmit(order, itemsList, orderId) {
       });
     });
 
-    console.log('Formsubmit sent successfully.');
-    showOrderSentConfirmation(true);
+    console.log('FormSubmit sent successfully.');
+    showOrderSentConfirmation();
     return true;
   } catch (error) {
     console.error('Error submitting form:', error);
@@ -484,17 +435,15 @@ function escapeHtml(str) {
 }
 
 // Show a nicer confirmation (replace alerts in production if desired)
-function showOrderSentConfirmation(isFallback = false) {
+function legacyShowOrderSentConfirmation(isFallback = false) {
   const msg = isFallback ? '✅ Order submitted via fallback. Please check your email for confirmation.' : '✅ Order submitted! Please check your email for confirmation.';
   // In a real application, you'd likely use a modal or toast notification.
   // For now, using alert as per original code, but with a more informative message.
   alert(msg);
 }
 
-function showOrderSentConfirmation(isFallback = false) {
-  const msg = isFallback
-    ? 'Order sent using the backup email form. Check the restaurant inbox to confirm it arrived.'
-    : 'Order email sent successfully. Check the restaurant inbox to confirm it arrived.';
+function showOrderSentConfirmation() {
+  const msg = 'Order sent using FormSubmit. Check the restaurant inbox to confirm it arrived.';
   alert(msg);
 }
 
