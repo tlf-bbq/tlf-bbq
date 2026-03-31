@@ -600,29 +600,30 @@ document.querySelectorAll(".add-btn").forEach(btn => {
 });
 
 
-function testOrderNotification() {
-  const order = {
-    name: 'TEST Aiden Gregg',
-    phone: '(555) 555-1234',
-    items: '1x Brisket\n2x Mac & Cheese',
-    total: '$24.00',
-    pickup: '2026-04-01 6:00 PM',
-    notes: 'Local test - ignore'
-  };
 
-  const slackText = `*New Order Received*
-*Name:* ${order.name}
-*Phone:* ${order.phone}
-*Items:*
-${order.items}
-*Total:* ${order.total}
-*Pickup:* ${order.pickup}
-*Notes:* ${order.notes}`;
+const SLACK_WEBHOOK = 'https://hooks.slack.com/services/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';
 
-  // Shows EXACT message that will go to Slack
-  alert('✅ FORMATTED MESSAGE READY:\n\n' + slackText + 
-        '\n\n✅ Copy-paste to Slack webhook manually for now\n' +
-        '✅ Or upload to GitHub Pages for auto-send');
+async function testSlackNow() {
+  try {
+    const payload = {
+      text: `*🧪 TEST ORDER* (from live site)\nName: Aiden Test\nPhone: 555-1234\nItems: 1x Brisket\nTotal: $12\nPickup: Tomorrow 6PM`
+    };
 
-  console.log('Slack payload:', { text: slackText });
+    const res = await fetch(SLACK_WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      alert('✅ SLACK MESSAGE SENT! Check your channel.');
+    } else {
+      alert('❌ Slack error: ' + await res.text());
+    }
+  } catch(e) {
+    alert('❌ Fetch failed (still building?): ' + e.message);
+  }
 }
+
+
+
