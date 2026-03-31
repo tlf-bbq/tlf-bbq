@@ -1,4 +1,6 @@
 
+
+
 // Global cart storage
 let cartItems = [];
 let tipPercent = 0;
@@ -329,8 +331,9 @@ function closeCheckoutDrawer() {
 
 // --- Email Sending: Web3Forms ---
 const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
-const WEB3FORMS_ACCESS_KEY = '88747690-3a68-423b-9738-a8a072de0d63';
+const WEB3FORMS_ACCESS_KEY = '';
 const FORM_REQUEST_TIMEOUT_MS = 10000;
+const EMAIL_TEST_QUERY_PARAM = 'emailtest';
 
 function createHiddenField(name, value) {
   const input = document.createElement("input");
@@ -365,7 +368,7 @@ async function submitOrderWithWeb3Forms(order, itemsList, orderId) {
   const accessKey = WEB3FORMS_ACCESS_KEY.trim();
 
   if (!accessKey) {
-    alert('Add your Web3Forms access key in JSDAD.js before testing orders.');
+    alert('Add your Web3Forms access key in JSDAD.js before sending order emails.');
     return false;
   }
 
@@ -373,6 +376,10 @@ async function submitOrderWithWeb3Forms(order, itemsList, orderId) {
   const timeoutId = setTimeout(() => controller.abort(), FORM_REQUEST_TIMEOUT_MS);
 
   try {
+    const customerEmail = (order.customerEmail || '').trim();
+    const notificationEmail = (order.notificationEmail || '').trim();
+    const isTestOrder = Boolean(order.isTest);
+
     const response = await fetch(WEB3FORMS_URL, {
       method: 'POST',
       headers: {
@@ -381,17 +388,20 @@ async function submitOrderWithWeb3Forms(order, itemsList, orderId) {
       },
       body: JSON.stringify({
         access_key: accessKey,
-        subject: `New BBQ Order - ${order.name || 'Customer'}`,
+        subject: `${isTestOrder ? 'TEST - ' : ''}New BBQ Order - ${order.name || 'Customer'}`,
         from_name: 'TLF BBQ Online Orders',
         name: order.name || '',
         phone: order.phone || '',
-        email: 'orders@tlfbbq.local',
-        replyto: 'orders@tlfbbq.local',
+        email: customerEmail,
+        replyto: customerEmail,
+        ccemail: notificationEmail,
         items: itemsList,
         total: `$${(order.total || 0).toFixed(2)}`,
         pickup: `${order.pickupDate || ''} ${order.pickupTime || ''}`.trim(),
         notes: order.notes || 'None',
         orderId: orderId,
+        customerEmail: customerEmail || 'N/A',
+        notificationEmail: notificationEmail || 'None',
         paypalCaptureId: order.paypalCaptureId || 'N/A',
         botcheck: ''
       }),
@@ -406,7 +416,7 @@ async function submitOrderWithWeb3Forms(order, itemsList, orderId) {
     }
 
     console.log('Web3Forms sent successfully.', result);
-    showOrderSentConfirmation();
+    showOrderSentConfirmation(order);
     return true;
   } catch (error) {
     console.error('Web3Forms error:', error);
@@ -437,12 +447,26 @@ function legacyShowOrderSentConfirmation(isFallback = false) {
 }
 
 function showOrderSentConfirmation(options = {}) {
-  const msg = 'Order sent using Web3Forms. Check aidenjgregg@gmail.com to confirm it arrived.';
+  const recipients = [];
+
+  if (options.customerEmail) {
+    recipients.push(`customer copy: ${options.customerEmail}`);
+  }
+
+  if (options.notificationEmail) {
+    recipients.push(`extra copy: ${options.notificationEmail}`);
+  }
+
+  const modeLabel = options.isTest ? 'Test order' : 'Order';
+  const details = recipients.length > 0
+    ? `\n\nRequested recipient emails:\n${recipients.join('\n')}\n\nCustomer and extra recipient delivery depends on your Web3Forms autoresponder/CC setup.`
+    : '';
+  const msg = `${modeLabel} email sent to TLF BBQ.${details}`;
   alert(msg);
 }
 
-// Test email order function (now async)
-async function testOrderNotification() {
+// Legacy test helper kept for reference while the shared paid/test flow is active below.
+async function legacyTestOrderNotification() {
   if (cartItems.length === 0) {
     alert('Add items to cart first! 🛒');
     openCheckoutDrawer(); // Open drawer to encourage adding items
@@ -469,24 +493,121 @@ async function testOrderNotification() {
   }
 }
 
+function getTrimmedInputValue(id) {
+  return document.getElementById(id)?.value?.trim() || '';
+}
+
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function shouldShowEmailTestTools() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(EMAIL_TEST_QUERY_PARAM) === '1';
+  } catch (error) {
+    console.warn('Could not read email test query flag.', error);
+    return false;
+  }
+}
+
+function buildCurrentOrderPayload(options = {}) {
+  const { isTest = false, paypalCaptureId = null } = options;
+  const { total } = getTotal();
+
+  return {
+    name: getTrimmedInputValue('cust-name'),
+    phone: getTrimmedInputValue('cust-phone'),
+    customerEmail: getTrimmedInputValue('cust-email'),
+    notificationEmail: getTrimmedInputValue('notify-email'),
+    items: cartItems.map(item => ({ ...item })),
+    total,
+    pickupDate: getTrimmedInputValue('pickup-date'),
+    pickupTime: getTrimmedInputValue('pickup-time'),
+    notes: getTrimmedInputValue('order-notes'),
+    paypalCaptureId,
+    isTest
+  };
+}
+
+function validateOrderPayload(order, options = {}) {
+  const { isTest = false } = options;
+
+  if (!order.items || order.items.length === 0) {
+    alert('Add items to cart first!');
+    openCheckoutDrawer();
+    return false;
+  }
+
+  if (!order.name || !order.phone || !order.customerEmail || !order.pickupDate || !order.pickupTime) {
+    alert('Please fill in your name, phone number, email, pickup date, and pickup time before continuing.');
+    return false;
+  }
+
+  if (!isValidEmail(order.customerEmail)) {
+    alert('Please enter a valid customer email address.');
+    return false;
+  }
+
+  if (order.notificationEmail && !isValidEmail(order.notificationEmail)) {
+    alert('Please enter a valid extra order email address or leave it blank.');
+    return false;
+  }
+
+  if (!isTest && !order.paypalCaptureId) {
+    alert('Payment must be confirmed before order emails are sent.');
+    return false;
+  }
+
+  return true;
+}
+
+async function sendCheckoutEmailsForCurrentOrder(options = {}) {
+  const order = buildCurrentOrderPayload(options);
+
+  if (!validateOrderPayload(order, options)) {
+    return false;
+  }
+
+  try {
+    await sendOrderNotification(order);
+    console.log(options.isTest ? 'Test order notification sent successfully.' : 'Paid order notification sent successfully.');
+    return true;
+  } catch (err) {
+    console.error('Order notification failed:', err);
+    alert('Order email failed. Please check the console for details.');
+    return false;
+  }
+}
+
+// Override the legacy test handler so it uses the same payload as the paid flow.
+async function testOrderNotification() {
+  return sendCheckoutEmailsForCurrentOrder({ isTest: true });
+}
+
+window.testOrderNotification = testOrderNotification;
+window.sendCheckoutEmailsForCurrentOrder = sendCheckoutEmailsForCurrentOrder;
+
 // Show pre-pay confirmation screen
 function showPrePayConfirmation() {
   const dynamic = document.getElementById("dynamic-content");
+  const orderPreview = buildCurrentOrderPayload();
   const { total } = getTotal();
 
-  const n = document.getElementById("cust-name")?.value || "";
-  const p = document.getElementById("cust-phone")?.value || "";
-  const d = document.getElementById("pickup-date")?.value || "";
-  const t = document.getElementById("pickup-time")?.value || "";
-  const nt = document.getElementById("order-notes")?.value || "";
-
-  if (!n || !p || !d || !t) {
-    alert("Please fill in your name, phone number, pickup date, and pickup time before continuing.");
+  if (!validateOrderPayload(orderPreview, { isTest: true })) {
     return;
   }
 
+  const n = orderPreview.name;
+  const p = orderPreview.phone;
+  const em = orderPreview.customerEmail;
+  const notify = orderPreview.notificationEmail;
+  const d = orderPreview.pickupDate;
+  const t = orderPreview.pickupTime;
+  const nt = orderPreview.notes;
+
   let cartHTML = `<ul class="confirm-cart-list">`;
-  cartItems.forEach(item => {
+  orderPreview.items.forEach(item => {
     const lineTotal = item.price * item.qty;
     cartHTML += `
       <li class="confirm-cart-item">
@@ -505,6 +626,8 @@ function showPrePayConfirmation() {
         <div class="confirm-box">
           <p><strong>Name:</strong> ${escapeHtml(n)}</p>
           <p><strong>Phone:</strong> ${escapeHtml(p)}</p>
+          <p><strong>Customer Email:</strong> ${escapeHtml(em)}</p>
+          <p><strong>Extra Order Email:</strong> ${escapeHtml(notify || "None")}</p>
           <p><strong>Pickup Date:</strong> ${escapeHtml(d)}</p>
           <p><strong>Pickup Time:</strong> ${escapeHtml(t)}</p>
           <p><strong>Notes:</strong> ${escapeHtml(nt || "None")}</p>
@@ -514,7 +637,7 @@ function showPrePayConfirmation() {
         <button class="cancel-btn" id="go-back-menu-btn">← Go Back to Menu</button>
         <div class="confirm-pay-section">
           <div id="paypal-button-container"></div>
-          <button id="test-email-btn" class="test-email-btn">Test Email Order</button>
+          ${shouldShowEmailTestTools() ? '<button id="test-email-btn" class="test-email-btn" type="button">Send Test Order Email</button>' : ''}
         </div>
       </div>
     </div>`;
@@ -552,18 +675,21 @@ function showPrePayConfirmation() {
           const capture = await actions.order.capture();
           console.log('PayPal capture details:', capture);
 
-          const orderPayload = {
-            name: n,
-            phone: p,
-            items: cartItems,
-            total: getTotal().total, // Use the calculated total
-            pickupDate: d,
-            pickupTime: t,
-            notes: nt,
+          const emailSent = await sendCheckoutEmailsForCurrentOrder({
+            isTest: false,
             paypalCaptureId: capture?.id || null
-          };
+          });
 
-          await sendOrderNotification(orderPayload);
+          if (!emailSent) {
+            alert("Payment was captured, but the order email could not be sent. Please contact TLF BBQ with your pickup details.");
+          } else {
+            cartItems.forEach(item => resetMenuCardQty(item.name));
+            cartItems = [];
+            tipPercent = 0;
+            tipCustomAmount = 0;
+            promoAmount = 0;
+            updateCartDisplay();
+          }
           // Optionally show a success message or redirect after successful payment and email
           // alert("Payment successful! Your order has been placed.");
           // window.location.href = "/thanks.html"; // Redirect to a thank you page
