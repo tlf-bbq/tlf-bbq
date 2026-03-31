@@ -553,21 +553,10 @@
 
 <script src="JSDAD.js"></script>
 
-<script>
-  // In your DOMContentLoaded, add:
-const footer = document.querySelector('.checkout-footer');
-if (footer && !document.getElementById('test-email-btn')) {
-  const btn = document.createElement('button');
-  btn.id = 'test-email-btn';
-  btn.textContent = '🧪 Test Email (FREE)';
-  btn.style.cssText = `
-    width:100%; margin-top:8px; padding:12px; background:#059669; 
-    color:white; border:none; border-radius:8px; font-weight:600;
-    cursor:pointer; font-size:14px;
-  `;
-  btn.onclick = testEmailOrder;
-  footer.appendChild(btn);
-}
-</script>
+<button onclick="testOrderNotification()" 
+        style="position:fixed;top:20px;left:20px;z-index:9999;padding:12px 24px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;box-shadow:0 8px 20px rgba(16,185,129,0.4);">
+  🧪 Test Message Format
+</button>
 </body>
 </html>
+
