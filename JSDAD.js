@@ -28,15 +28,19 @@ function initCarousel() {
 
   // Use requestAnimationFrame for smoother animation loop if needed, or keep setInterval for simplicity
   // For this example, keeping setInterval as it's common for carousels.
-  const intervalId = setInterval(() => goToSlide(index + 1), 4000);
+  let intervalId = setInterval(() => goToSlide(index + 1), 4000);
+
+  function restartInterval() {
+    clearInterval(intervalId);
+    intervalId = setInterval(() => goToSlide(index + 1), 4000);
+  }
 
   // Optional: Clear interval on mouse hover to prevent unexpected jumps
-  const carouselContainer = track.closest('.carousel-container'); // Assuming a container exists
+  const carouselContainer = track.closest('.carousel');
   if (carouselContainer) {
     carouselContainer.addEventListener('mouseenter', () => clearInterval(intervalId));
     carouselContainer.addEventListener('mouseleave', () => {
-      // Re-initialize or restart interval if needed, or just let it continue
-      // For simplicity, we'll let it continue. If restart is desired, store intervalId and restart.
+      restartInterval();
     });
   }
 }
@@ -325,7 +329,7 @@ function closeCheckoutDrawer() {
 
 // --- Email Sending: Web3Forms ---
 const WEB3FORMS_URL = 'https://api.web3forms.com/submit';
-const WEB3FORMS_ACCESS_KEY = '88747690-3a68-423b-9738-a8a072de0d63';
+const WEB3FORMS_ACCESS_KEY = '';
 const FORM_REQUEST_TIMEOUT_MS = 10000;
 
 function createHiddenField(name, value) {
