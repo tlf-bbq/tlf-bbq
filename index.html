@@ -9,7 +9,7 @@
   <title>TLF BBQ and Catering</title>
 
 <link rel="stylesheet" href="codefordad.css">
- 
+
 </head>
 
 <body onload="window.scrollTo(0,0)">
@@ -51,8 +51,9 @@
   </div>
 </section>
 
-<!-- ABOUT PAGE (hidden by default) -->
-<div id="about-page" class="page-scroll-wrap hidden">
+<!-- ABOUT PAGE TEMPLATE -->
+<template id="about-page-template">
+<div id="about-page" class="page-scroll-wrap">
   <div class="page-content">
     <div class="info-wrapper1">
       <div class="info-left1">
@@ -89,6 +90,7 @@
     </footer>
   </div>
 </div>
+</template>
 
 <!-- ROOT DYNAMIC CONTENT -->
 <div id="dynamic-content">
@@ -553,9 +555,7 @@
 
 <script src="JSDAD.js"></script>
 
-<button onclick="testOrderNotification()" 
-        style="position:fixed;top:20px;left:20px;z-index:9999;padding:12px 24px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;box-shadow:0 8px 20px rgba(16,185,129,0.4);">
-  🧪 Test Message Format
-</button>
+
 </body>
 </html>
+
