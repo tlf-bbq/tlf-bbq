@@ -1,0 +1,561 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>TLF BBQ and Catering</title>
+
+<link rel="stylesheet" href="codefordad.css">
+</head>
+
+<body onload="window.scrollTo(0,0)">
+
+<header class="navbar" id="nav">
+  <div class="logo" id="homeLogo">TLF BBQ</div>
+
+  <nav class="nav-links">
+    <a href="#" id="menuNav">Menu</a>
+    <a href="#" id="aboutNav">About Us</a>
+    <a href="#">Hours &amp; Location</a>
+    <a href="#" class="reserve-btn" id="navReserve">Book A Table</a>
+  </nav>
+
+  <div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</header>
+
+<div class="slideout" id="slideout">
+  <div class="close-btn" id="closeBtn">✕</div>
+
+  <a href="#" id="menuSlide">Menus</a>
+  <a href="#" id="aboutSlide">About Us</a>
+  <a href="#">Private Dining</a>
+  <a href="#">Hours & Location</a>
+  <a href="#" class="reserve-btn">Book A Table</a>
+</div>
+
+<section class="hero-wrap">
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Make Your Order Today</h1>
+      <p>2 Whippany Rd, Morristown, NJ 07960 • (973)-451-2619</p>
+      <button class="hero-button" id="heroReserve">Reserve Now</button>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT PAGE (hidden by default) -->
+<div id="about-page" class="page-scroll-wrap hidden">
+  <div class="page-content">
+    <div class="info-wrapper1">
+      <div class="info-left1">
+        <h2>About TLF BBQ</h2>
+        <p>We’re a family‑owned BBQ and catering company based in Morristown, NJ, serving slow‑smoked meats and bold flavors since 2018.</p>
+        <p>Our team is led by Chef Bryan Gregg, formerly of Think Local Foods and Escape Montclair, who brings restaurant‑quality technique to every plate.</p>
+        <p>We focus on local ingredients, seasonal menus, and consistent hospitality that keeps our guests coming back.</p>
+      </div>
+
+      <div class="info-box1 about-photo-box">
+        <img
+          src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200&q=80"
+          alt="Our team smoking meats"
+        />
+      </div>
+    </div>
+
+    <section class="info-split1">
+      <div class="left-side">
+        <div class="chef-section">
+          <h2>Our Mission</h2>
+          <p>To bring high‑quality BBQ and catering to Morristown and the surrounding communities, with a focus on flavor, freshness, and friendly service.</p>
+        </div>
+      </div>
+      <div class="right-side">
+        <h2>Connect With Us</h2>
+        <a href="#" class="outline-btn">Facebook</a>
+        <a href="#" class="outline-btn">Instagram</a>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2026 TLF BBQ and Catering</p>
+    </footer>
+  </div>
+</div>
+
+<!-- ROOT DYNAMIC CONTENT -->
+<div id="dynamic-content">
+  <div class="page-scroll-wrap" id="landing-page">
+    <div class="page-content">
+
+      <div class="info-wrapper1">
+        <!-- LEFT SECTION -->
+        <div class="info-left1">
+          <h2>Our Menus</h2>
+          <p>Experience seasonal BBQ crafted with local ingredients and slow‑smoked over hardwood.</p>
+          <button class="btnl" id="viewMenusBtn">View Menus</button>
+        </div>
+
+        <!-- RIGHT SECTION – CAROUSEL -->
+        <div class="info-box1 carousel">
+          <div class="carousel-track">
+            <img
+              src="https://scontent-lga3-2.xx.fbcdn.net/v/t39.30808-6/656986463_1254314630151487_7916495074086586369_n.jpg?auto=webp&width=800"
+              class="carousel-img"
+              alt="BBQ plate 1"
+            />
+            <img
+              src="https://scontent-lga3-1.xx.fbcdn.net/v/t39.30808-6/506632302_23939052565785263_2520389364483189022_n.jpg?auto=webp&width=800"
+              class="carousel-img"
+              alt="BBQ plate 2"
+            />
+            <img
+              src="https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80"
+              class="carousel-img"
+              alt="Kitchen"
+            />
+          </div>
+
+          <button class="carousel-btn prev">‹</button>
+          <button class="carousel-btn next">›</button>
+        </div>
+      </div>
+
+      <section class="info-split1">
+        <div class="left-side">
+          <div class="chef-section">
+            <h2>Meet The Chef</h2>
+            <p>
+              Chef Bryan Gregg is an award‑winning chef celebrated for his
+              refined technique, respect for ingredients, and dedication to New
+              Jersey’s local producers.
+            </p>
+            <p>
+              He founded <strong>Think Local Foods</strong>, led acclaimed
+              restaurants such as <strong>Escape Montclair</strong>, and
+              launched <strong>Tastes by Bryan Gregg</strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="right-side">
+          <h2>Our Socials</h2>
+          <a href="#" class="outline-btn">Facebook</a>
+          <a href="#" class="outline-btn">Instagram</a>
+        </div>
+      </section>
+
+      <footer>
+        <p>© 2026 TLF BBQ and Catering</p>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<!-- FLOATING CART BUTTON -->
+<button class="floating-cart-btn" id="open-checkout">
+  Cart
+  <span class="cart-count" id="cart-count">0</span>
+</button>
+
+<!-- CHECKOUT DRAWER + BACKDROP -->
+<div class="checkout-drawer-backdrop" id="checkout-backdrop"></div>
+
+<div class="checkout-drawer" id="checkout-drawer">
+  <div class="checkout-header">
+    <h2>Checkout</h2>
+    <button class="checkout-close-btn" id="close-checkout">✕</button>
+  </div>
+
+  <div class="checkout-body">
+    <!-- ORDER SUMMARY -->
+    <div class="checkout-card">
+      <div class="checkout-section-title">Order Summary</div>
+      <ul id="cart-list"></ul>
+      <p class="cart-empty" id="cart-empty-msg">Your cart is empty.</p>
+    </div>
+
+    <!-- TIP -->
+    <div class="checkout-card">
+      <div class="checkout-section-title">Tip</div>
+      <div class="tip-row">
+        <button class="tip-btn" data-tip="0.1">10%</button>
+        <button class="tip-btn" data-tip="0.15">15%</button>
+        <button class="tip-btn" data-tip="0.2">20%</button>
+        <button class="tip-btn" data-tip="0">No Tip</button>
+      </div>
+      <input
+        type="number"
+        min="0"
+        step="0.5"
+        class="tip-custom-input"
+        id="tip-custom"
+        placeholder="Custom tip amount (optional)"
+      />
+    </div>
+
+    <!-- PROMO -->
+    <div class="checkout-card">
+      <div class="checkout-section-title">Promo Code</div>
+      <div class="promo-row">
+        <input
+          type="text"
+          id="promo-code"
+          class="promo-input"
+          placeholder="Enter promo code"
+        />
+        <button class="promo-apply-btn" id="apply-promo">Apply</button>
+      </div>
+      <p class="promo-note">Promo codes are optional. You can add them later at the counter if needed.</p>
+    </div>
+
+    <!-- PICKUP DETAILS -->
+    <div class="checkout-card pickup-section">
+      <div class="checkout-section-title">Pickup Details</div>
+
+      <div class="pickup-toggle-row">
+        <button class="pickup-toggle-btn active" id="pickup-mode">Pickup</button>
+        <button class="pickup-toggle-btn" id="delivery-mode" disabled>Delivery (Coming Soon)</button>
+      </div>
+
+      <div class="pickup-row">
+        <input
+          type="text"
+          id="cust-name"
+          placeholder="Name"
+          required
+        />
+        <input
+          type="tel"
+          id="cust-phone"
+          placeholder="Phone"
+          required
+        />
+      </div>
+
+      <div class="pickup-row">
+        <input type="date" id="pickup-date" required />
+        <select id="pickup-time">
+          <option value="">Pickup Time</option>
+          <option value="11:00">11:00 AM</option>
+          <option value="11:30">11:30 AM</option>
+          <option value="12:00">12:00 PM</option>
+          <option value="12:30">12:30 PM</option>
+          <option value="13:00">1:00 PM</option>
+          <option value="13:30">1:30 PM</option>
+          <option value="14:00">2:00 PM</option>
+          <option value="14:30">2:30 PM</option>
+          <option value="15:00">3:00 PM</option>
+          <option value="15:30">3:30 PM</option>
+          <option value="16:00">4:00 PM</option>
+          <option value="16:30">4:30 PM</option>
+          <option value="17:00">5:00 PM</option>
+          <option value="17:30">5:30 PM</option>
+          <option value="18:00">6:00 PM</option>
+          <option value="18:30">6:30 PM</option>
+          <option value="19:00">7:00 PM</option>
+          <option value="19:30">7:30 PM</option>
+          <option value="20:00">8:00 PM</option>
+        </select>
+      </div>
+
+      <textarea
+        id="order-notes"
+        placeholder="Special instructions (allergies, parking, car color, etc.)"
+      ></textarea>
+
+      <p class="prep-time">Estimated prep time: 20–30 minutes after payment.</p>
+    </div>
+  </div>
+
+  <div class="checkout-footer">
+    <div class="totals-row">
+      <span>Subtotal</span>
+      <span id="subtotal-display">$0.00</span>
+    </div>
+    <div class="totals-row">
+      <span>Tip</span>
+      <span id="tip-display">$0.00</span>
+    </div>
+    <div class="totals-row">
+      <span>Promo</span>
+      <span id="promo-display">–$0.00</span>
+    </div>
+    <div class="totals-row total">
+      <span>Total</span>
+      <span id="cart-total">$0.00</span>
+    </div>
+
+    <div class="checkout-actions">
+      <button id="clear-cart" class="clear-cart-btn">Clear Cart</button>
+      <button class="review-order-btn" id="review-order-btn">
+        Review Order &amp; Pay
+      </button>
+      <p class="paypal-note">Payment is securely processed via PayPal on the next screen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- MENU SYSTEM TEMPLATE -->
+<template id="menu-template">
+  <section class="order-system">
+
+    <h2 class="menu-title">Order BBQ</h2>
+    <p>Build your order from our smoked meats, sides, drinks, and combos.</p>
+
+    <div class="menu-tabs">
+      <button class="tab active" data-category="meats">Meats</button>
+      <button class="tab" data-category="sides">Sides</button>
+      <button class="tab" data-category="drinks">Drinks</button>
+      <button class="tab" data-category="combos">Combos</button>
+    </div>
+
+    <!-- MEATS -->
+    <div class="menu-grid" id="meats">
+      <div class="menu-item">
+        <img src="images/brisket.jpg" alt="Brisket" class="item-img" />
+
+        <div class="menu-content">
+          <div class="menu-header">
+            <h3>Brisket</h3>
+            <span class="price">$0.01</span>
+          </div>
+
+          <p class="short-desc">
+            12‑hour smoked brisket, tender slices with house pickles.
+          </p>
+          <p class="full-desc">
+            Slow‑smoked over hardwood, finished with the chef’s signature glaze
+            and served ready to pair with your favorite sides.
+          </p>
+
+          <div class="menu-meta-row">
+            <div class="menu-meta">
+              <span>Slow smoked</span>
+              <span>Feeds 1–2</span>
+            </div>
+
+            <div class="qty-selector">
+              <button class="qty-btn-card qty-minus">−</button>
+              <span class="qty-number">0</span>
+              <button class="qty-btn-card qty-plus">+</button>
+            </div>
+
+            <button
+              class="add-btn"
+              data-item="Brisket"
+              data-price=".10"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="menu-item">
+        <img
+          src="images/pulled-pork.jpg"
+          alt="Pulled pork"
+          class="item-img"
+        />
+
+        <div class="menu-content">
+          <div class="menu-header">
+            <h3>Pulled Pork</h3>
+            <span class="price">$12</span>
+          </div>
+
+          <p class="short-desc">
+            Hand‑pulled pork shoulder with a sweet‑heat BBQ finish.
+          </p>
+          <p class="full-desc">
+            Smoked low and slow until it falls apart, tossed in house sauce and
+            ready to pile high on a bun or plate.
+          </p>
+
+          <div class="menu-meta-row">
+            <div class="menu-meta">
+              <span>Low &amp; slow</span>
+              <span>Feeds 1–2</span>
+            </div>
+
+            <div class="qty-selector">
+              <button class="qty-btn-card qty-minus">−</button>
+              <span class="qty-number">0</span>
+              <button class="qty-btn-card qty-plus">+</button>
+            </div>
+
+            <button
+              class="add-btn"
+              data-item="Pulled Pork"
+              data-price="12"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDES -->
+    <div class="menu-grid hidden" id="sides">
+      <div class="menu-item">
+        <img
+          src="images/mac-cheese.jpg"
+          alt="Mac and cheese"
+          class="item-img"
+        />
+
+        <div class="menu-content">
+          <div class="menu-header">
+            <h3>Mac &amp; Cheese</h3>
+            <span class="price">$6</span>
+          </div>
+
+          <p class="short-desc">
+            Creamy three‑cheese skillet mac with crisp crumb topping.
+          </p>
+          <p class="full-desc">
+            Elbow pasta tossed in a rich house cheese sauce, finished under the
+            broiler for a golden, crunchy crust.
+          </p>
+
+          <div class="menu-meta-row">
+            <div class="menu-meta">
+              <span>Side</span>
+              <span>Comfort classic</span>
+            </div>
+
+            <div class="qty-selector">
+              <button class="qty-btn-card qty-minus">−</button>
+              <span class="qty-number">0</span>
+              <button class="qty-btn-card qty-plus">+</button>
+            </div>
+
+            <button
+              class="add-btn"
+              data-item="Mac &amp; Cheese"
+              data-price="6"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRINKS -->
+    <div class="menu-grid hidden" id="drinks">
+      <div class="menu-item">
+        <img
+          src="images/sweet-tea.jpg"
+          alt="Sweet tea"
+          class="item-img"
+        />
+
+        <div class="menu-content">
+          <div class="menu-header">
+            <h3>Sweet Tea</h3>
+            <span class="price">$3</span>
+          </div>
+
+          <p class="short-desc">
+            Cold, sweet Southern‑style tea brewed in house.
+          </p>
+          <p class="full-desc">
+            Black tea slowly steeped, lightly citrus‑kissed, chilled, and poured
+            over ice.
+          </p>
+
+          <div class="menu-meta-row">
+            <div class="menu-meta">
+              <span>House made</span>
+              <span>16 oz</span>
+            </div>
+
+            <div class="qty-selector">
+              <button class="qty-btn-card qty-minus">−</button>
+              <span class="qty-number">0</span>
+              <button class="qty-btn-card qty-plus">+</button>
+            </div>
+
+            <button
+              class="add-btn"
+              data-item="Sweet Tea"
+              data-price="3"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMBOS -->
+    <div class="menu-grid hidden" id="combos">
+      <div class="menu-item">
+        <img
+          src="images/brisket-combo.jpg"
+          alt="Brisket combo"
+          class="item-img"
+        />
+
+        <div class="menu-content">
+          <div class="menu-header">
+            <h3>Brisket Combo</h3>
+            <span class="price">$18</span>
+          </div>
+
+          <p class="short-desc">
+            Brisket plate with two sides and house cornbread.
+          </p>
+          <p class="full-desc">
+            Sliced brisket, your choice of two sides, plus a warm slice of
+            cornbread and pickles.
+          </p>
+
+          <div class="menu-meta-row">
+            <div class="menu-meta">
+              <span>Best value</span>
+              <span>Feeds 1–2</span>
+            </div>
+
+            <div class="qty-selector">
+              <button class="qty-btn-card qty-minus">−</button>
+              <span class="qty-number">0</span>
+              <button class="qty-btn-card qty-plus">+</button>
+            </div>
+
+            <button
+              class="add-btn"
+              data-item="Brisket Combo"
+              data-price="18"
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</template>
+
+<!-- PAYPAL SDK -->
+<script src="https://www.paypal.com/sdk/js?client-id=AatKLlNCwYUK73aitYysJCVlDyII1X9A3pvGtgDqHf_JUAwxKHO9bDcpi9_XJcKemTQMYEcxNQDbUtZj&currency=USD"></script>
+
+<script src="JSDAD.js"></script>
+
+<button onclick="testOrderNotification()" 
+        style="position:fixed;top:20px;left:20px;z-index:9999;padding:12px 24px;background:#10b981;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;box-shadow:0 8px 20px rgba(16,185,129,0.4);">
+  🧪 Test Message Format
+</button>
+</body>
+</html>
