@@ -581,49 +581,58 @@ document.addEventListener("DOMContentLoaded", () => {
   initNavigation();
   initTipAndPromo();
 
-  const openCheckoutBtn = document.getElementById("open-checkout");
-  const closeCheckoutBtn = document.getElementById("close-checkout");
-  const backdrop = document.getElementById("checkout-backdrop");
-
-  if (openCheckoutBtn) openCheckoutBtn.addEventListener("click", openCheckoutDrawer);
-  if (closeCheckoutBtn) closeCheckoutBtn.addEventListener("click", closeCheckoutDrawer);
-  if (backdrop) backdrop.addEventListener("click", closeCheckoutDrawer);
-
-  updateCartDisplay();
-});
-document.querySelectorAll(".add-btn").forEach(btn => {
-  const card = btn.closest(".menu-item");
-  const qtySpan = card?.querySelector(".qty-number");
-  const item = cartItems.find(i => i.name === btn.dataset.item);
-
-  qtySpan.textContent = item ? item.qty : 0;
-});
-
-
-
-const SLACK_WEBHOOK = 'https://hooks.slack.com/services/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';
-
-async function testSlackNow() {
-  try {
-    const payload = {
-      text: `*🧪 TEST ORDER* (from live site)\nName: Aiden Test\nPhone: 555-1234\nItems: 1x Brisket\nTotal: $12\nPickup: Tomorrow 6PM`
-    };
-
-    const res = await fetch(SLACK_WEBHOOK, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    if (res.ok) {
-      alert('✅ SLACK MESSAGE SENT! Check your channel.');
-    } else {
-      alert('❌ Slack error: ' + await res.text());
-    }
-  } catch(e) {
-    alert('❌ Fetch failed (still building?): ' + e.message);
-  }
+ // 100% FREE - Uses YOUR Gmail (aidenjgregg@gmail.com)
+async function sendOrderNotification(order) {
+  // Create invisible form + auto-submit to Gmail
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://formsubmit.co/aidenjgregg@gmail.com'; // FREE service
+  form.style.display = 'none';
+  
+  // Build order details
+  const itemsList = order.items.map(i => `${i.qty}x ${i.name}`).join('\n');
+  const orderId = 'TLF-' + Date.now();
+  
+  // Add all fields
+  form.innerHTML = `
+    <input type="text" name="name" value="${order.name}">
+    <input type="text" name="phone" value="${order.phone}">
+    <textarea name="items">${itemsList}</textarea>
+    <input type="text" name="total" value="$${order.total.toFixed(2)}">
+    <input type="text" name="pickup" value="${order.pickupDate} ${order.pickupTime}">
+    <input type="text" name="notes" value="${order.notes || 'None'}">
+    <input type="text" name="orderId" value="${orderId}">
+    <input type="text" name="_next" value="https://tlf-bbq.github.io/tlf-bbq/thanks.html">
+    <input type="text" name="_subject" value="New BBQ Order - ${order.name}">
+    <input type="text" name="_captcha" value="false">
+  `;
+  
+  document.body.appendChild(form);
+  form.submit();
+  
+  alert('✅ Order emailed to you! Check inbox.');
 }
 
+// Test button (uses real cart)
+function testEmailOrder() {
+  if (cartItems.length === 0) {
+    alert('Add items to cart first! 🛒');
+    openCheckoutDrawer();
+    return;
+  }
+  
+  const order = {
+    name: 'TEST ' + (document.getElementById('cust-name')?.value || 'Customer'),
+    phone: document.getElementById('cust-phone')?.value || '555-1234',
+    items: cartItems,
+    total: getTotal().total,
+    pickupDate: document.getElementById('pickup-date')?.value || 'Tomorrow',
+    pickupTime: document.getElementById('pickup-time')?.value || '6PM',
+    notes: document.getElementById('order-notes')?.value || 'Test order'
+  };
+  
+  sendOrderNotification(order);
+}
+}
 
 
