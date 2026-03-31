@@ -1,4 +1,4 @@
- :root {
+    :root {
       --bg: #0d0d0d;
       --bg-alt: #141414;
       --card: #1a1a1a;
@@ -408,7 +408,7 @@
         flex-direction: column;
       }
       .info-box1 {
-        min-height: 220px;
+        min-height: 320px;
       }
     }
 
@@ -1292,6 +1292,15 @@
 
     /* RESPONSIVE MENU CARD ON SMALL SCREENS */
     @media (max-width: 500px) {
+      .info-box1.carousel {
+        min-height: 360px;
+      }
+
+      .carousel-track,
+      .carousel-img {
+        min-height: 360px;
+      }
+
       .menu-item {
         grid-template-columns: 1fr;
       }
