@@ -356,10 +356,10 @@
       border: 1px solid var(--border-color);
       box-shadow: var(--shadow-soft);
       position: relative;
-      height: 300px;
+      min-height: 260px;
     }
 
-   /* CAROUSEL */
+    /* CAROUSEL */
     .info-box1.carousel {
       min-height: 0;
       aspect-ratio: 4 / 3;
@@ -420,7 +420,6 @@
         aspect-ratio: 16 / 10;
       }
     }
-
 
     /* CHEF / SOCIAL SPLIT */
     .info-split1 {
@@ -1303,12 +1302,13 @@
     /* RESPONSIVE MENU CARD ON SMALL SCREENS */
     @media (max-width: 500px) {
       .info-box1.carousel {
-        min-height: 360px;
+        min-height: 0;
+        aspect-ratio: 1 / 1;
       }
 
       .carousel-track,
       .carousel-img {
-        min-height: 360px;
+        min-height: 0;
       }
 
       .menu-item {
